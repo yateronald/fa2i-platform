@@ -31,7 +31,7 @@
     "pg": "^8.22.0"
   },
   "devDependencies": {
-    "fast-check": "3.23.2",
-    "vitest": "2.1.8"
+    "fast-check": "^4.8.0",
+    "vitest": "^4.1.9"
   }
 }
