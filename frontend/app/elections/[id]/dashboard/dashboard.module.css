@@ -1,0 +1,504 @@
+/* ════════════════════════════════════════════════════════════════════════
+ * LIVE RESULTS DASHBOARD — Modern redesign
+ * ════════════════════════════════════════════════════════════════════════ */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  animation: fadeUp 0.35s ease;
+}
+
+/* ── Live indicator in topbar ──────────────────────────── */
+.topbarLiveWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-left: 0.5rem;
+}
+
+.liveTagTopbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.18);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--success);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  animation: liveBlink 1.25s ease-in-out infinite;
+}
+
+.refreshDotTopbar {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+  animation: livePulse 1.25s ease-out infinite;
+}
+
+.refreshIndicatorTopbar {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Stat grid ─────────────────────────────────────────── */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.statCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.5rem 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+}
+
+.statCardGreen::before { background: linear-gradient(90deg, var(--fa2i-green), var(--fa2i-green-light)); }
+.statCardOrange::before { background: linear-gradient(90deg, var(--fa2i-orange), var(--fa2i-orange-light)); }
+.statCardBlue::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+
+.statTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.statIconGreen { background: rgba(30, 125, 64, 0.1); color: var(--fa2i-green); }
+.statIconOrange { background: rgba(245, 124, 0, 0.1); color: var(--fa2i-orange); }
+.statIconBlue { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.statLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+/* ── Position selector ─────────────────────────────────── */
+.selectorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.selectorHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.sectionCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.pillRow {
+  display: flex;
+  gap: 0.65rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  scrollbar-width: thin;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--transition-fast), background var(--transition-fast),
+    transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.pill:hover {
+  border-color: var(--fa2i-green);
+  transform: translateY(-1px);
+}
+
+.pillActive {
+  background: var(--fa2i-green);
+  border-color: var(--fa2i-green);
+  color: #fff;
+  box-shadow: var(--shadow-colored);
+}
+
+.pillName {
+  white-space: nowrap;
+}
+
+.pillBadge {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Mute the inner StateBadge border within an active pill for contrast. */
+.pillActive .pillBadge {
+  filter: saturate(1.1);
+}
+
+/* ── Detail panel ──────────────────────────────────────── */
+.detailPanel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.75rem;
+  animation: fadeUp 0.3s ease;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.detailHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.detailTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.detailVotes {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.chartCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.zeroNotice {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-align: center;
+}
+
+.breakdownCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.detailEmpty {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 1rem 0;
+}
+
+/* ── Candidate breakdown row ───────────────────────────── */
+.candidateRow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: var(--bg);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.candidateLeader {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.candidatePhoto {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.candidatePhotoFallback {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.candidateBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.candidateTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.candidateName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--fa2i-orange);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.candidatePct {
+  font-size: 1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.barContainer {
+  width: 100%;
+  height: 7px;
+  border-radius: 99px;
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.candidateCount {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* ── Warning banner ────────────────────────────────────── */
+.warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--warning-bg);
+  border: 1px solid #fde68a;
+  color: var(--warning);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ── Animations ────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes liveBlink {
+  0%, 100% {
+    border-color: rgba(22, 163, 74, 0.26);
+    background: rgba(22, 163, 74, 0.1);
+  }
+  50% {
+    border-color: rgba(22, 163, 74, 0.55);
+    background: rgba(22, 163, 74, 0.18);
+  }
+}
+
+@keyframes livePulse {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+  }
+  70% {
+    opacity: 0.65;
+    box-shadow: 0 0 0 8px rgba(22, 163, 74, 0);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .detailGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .statGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .statCard {
+    padding: 0.65rem 0.5rem;
+    gap: 0.2rem;
+    align-items: center;
+    text-align: center;
+  }
+  .statTop {
+    display: none;
+  }
+  .statNumber {
+    font-size: 1.25rem;
+  }
+  .statLabel {
+    font-size: 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  .detailPanel {
+    padding: 1.25rem 1rem;
+  }
+  .topbarLiveWrap {
+    gap: 0.35rem;
+    margin-left: 0.25rem;
+  }
+  .liveTagTopbar {
+    padding: 0.125rem 0.4rem;
+    font-size: 0.58rem;
+  }
+  .refreshIndicatorTopbar {
+    font-size: 0.62rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard, .statCard, .detailPanel, .liveTagTopbar, .refreshDotTopbar, .bar {
+    animation: none;
+    transition: none;
+  }
+}

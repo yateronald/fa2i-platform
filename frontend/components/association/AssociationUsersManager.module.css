@@ -1,0 +1,126 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Table */
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-top: 0.5rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.table th {
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.actionsCol {
+  text-align: right;
+}
+
+.name {
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+}
+
+.tempPwd {
+  display: inline-block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--fa2i-orange);
+  font-weight: 600;
+}
+
+.emailCell {
+  color: var(--text-secondary);
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.selfLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Forms (modals) */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.checkboxRow input {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.editTarget {
+  font-weight: 600;
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .actions {
+    justify-content: flex-start;
+  }
+}

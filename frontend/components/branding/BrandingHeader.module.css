@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, var(--fa2i-green) 0%, var(--fa2i-green-dark) 100%);
+  color: var(--fa2i-white);
+}
+
+.logoContainer {
+  margin-bottom: 1rem;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--fa2i-orange);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.title {
+  font-size: 1.4rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  font-style: italic;
+  color: var(--fa2i-orange-light);
+  font-size: 1rem;
+}

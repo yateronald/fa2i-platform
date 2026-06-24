@@ -1,0 +1,353 @@
+/* ════════════════════════════════════════════════════════════════════════
+ * PositionTally — Premium card design
+ * ════════════════════════════════════════════════════════════════════════ */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+/* ── Header ────────────────────────────────────────────── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.titleBlock {
+  min-width: 0;
+  width: 100%;
+}
+
+.positionKickerInline {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fa2i-green);
+  background: rgba(30, 125, 64, 0.06);
+  border: 1px solid rgba(30, 125, 64, 0.12);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.positionNameInline {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.participationBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.participationBadgeText {
+  white-space: nowrap;
+}
+
+.badgeChartWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.miniCirc {
+  transform: rotate(-90deg);
+}
+
+.badgePct {
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Mini horizontal stacked bar ───────────────────────── */
+.miniChart {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bg-subtle);
+  gap: 1px;
+}
+
+.miniBar {
+  height: 100%;
+  min-width: 4px;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Warning ───────────────────────────────────────────── */
+.warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--warning-bg);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  color: var(--warning);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.warning svg {
+  flex-shrink: 0;
+  color: var(--warning);
+}
+
+/* ── Empty ─────────────────────────────────────────────── */
+.empty {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-style: italic;
+  margin: 0;
+  padding: 0.75rem 0;
+}
+
+.zeroNotice {
+  margin: -0.15rem 0 0;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* ── Candidate list ────────────────────────────────────── */
+.candidateList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ── Candidate row ─────────────────────────────────────── */
+.candidateRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.candidateRow:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border);
+}
+
+.candidateLeader {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.candidateLeader:hover {
+  background: var(--success-bg);
+}
+
+/* ── Left side: photo + name ───────────────────────────── */
+.candidateLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.candidatePhoto {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.candidatePhotoFallback {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.candidateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.candidateNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.candidateName {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.candidateCount {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Leader badge ──────────────────────────────────────── */
+.leaderBadge {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fa2i-orange);
+  flex-shrink: 0;
+}
+
+/* ── Right side: percentage + bar ──────────────────────── */
+.candidateRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  width: 130px;
+}
+
+.candidatePct {
+  font-size: 0.88rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  min-width: 38px;
+  text-align: right;
+}
+
+.barContainer {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  min-width: 2px;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .card {
+    padding: 0.85rem;
+    gap: 0.75rem;
+  }
+  .titleRow {
+    gap: 0.5rem;
+  }
+  .positionKickerInline {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+  }
+  .positionNameInline {
+    font-size: 0.92rem;
+  }
+  .participationBadge {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.68rem;
+    gap: 0.35rem;
+  }
+  .badgeChartWrap {
+    width: 14px;
+    height: 14px;
+  }
+  .badgePct {
+    font-size: 0.68rem;
+  }
+  .candidatePhoto, .candidatePhotoFallback {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+  .candidateName {
+    font-size: 0.85rem;
+  }
+  .candidateCount {
+    font-size: 0.7rem;
+  }
+  .candidateRight {
+    width: 90px;
+    gap: 0.5rem;
+  }
+  .candidatePct {
+    font-size: 0.8rem;
+    min-width: 30px;
+  }
+  .barContainer {
+    height: 6px;
+  }
+  .candidateRow {
+    padding: 0.5rem 0.65rem;
+  }
+}

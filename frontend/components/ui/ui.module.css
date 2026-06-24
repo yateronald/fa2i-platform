@@ -1,0 +1,316 @@
+/* ── Card ──────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  transition: box-shadow var(--transition);
+}
+.card:hover {
+  box-shadow: var(--shadow);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.cardSubtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  font-weight: 400;
+}
+
+/* ── Button ─────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.575rem 1.125rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    border-color var(--transition-fast);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btnPrimary {
+  background: linear-gradient(135deg, var(--fa2i-orange-light) 0%, var(--fa2i-orange) 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(245, 124, 0, 0.3);
+}
+.btnPrimary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--fa2i-orange) 0%, var(--fa2i-orange-dark) 100%);
+  box-shadow: 0 4px 16px rgba(245, 124, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.btnSecondary {
+  background: linear-gradient(135deg, var(--fa2i-green-light) 0%, var(--fa2i-green) 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(30, 125, 64, 0.25);
+}
+.btnSecondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--fa2i-green) 0%, var(--fa2i-green-dark) 100%);
+  box-shadow: 0 4px 16px rgba(30, 125, 64, 0.35);
+  transform: translateY(-1px);
+}
+
+.btnOutline {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+.btnOutline:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: var(--text-faint);
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--text-muted);
+}
+.btnGhost:hover:not(:disabled) { background: var(--bg); color: var(--text); }
+
+.btnDanger {
+  background: linear-gradient(135deg, #ef4444, var(--danger));
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+.btnDanger:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+  transform: translateY(-1px);
+}
+
+.btnBlock { width: 100%; }
+.btnSm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+/* ── Badge ───────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badgeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+.badgeOpen {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+.badgeClosed {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+.badgeNeutral {
+  background: var(--info-bg);
+  color: var(--info);
+  border: 1px solid #bfdbfe;
+}
+.badgeWarn {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid #fde68a;
+}
+
+/* ── Field ───────────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.125rem; }
+.label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); }
+.input {
+  padding: 0.65rem 0.875rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  background: #fff;
+  width: 100%;
+  color: var(--text);
+  font-family: inherit;
+}
+.input::placeholder { color: var(--text-faint); }
+.input:focus {
+  border-color: var(--fa2i-green);
+  box-shadow: 0 0 0 3px rgba(30, 125, 64, 0.14);
+}
+.textarea { min-height: 90px; resize: vertical; font-family: inherit; line-height: 1.5; }
+.hint { font-size: 0.75rem; color: var(--text-muted); }
+.errorText { font-size: 0.78rem; color: var(--danger); font-weight: 500; }
+
+/* ── Spinner ─────────────────────────────────────────────────────── */
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--fa2i-green);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinnerWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 3.5rem 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ── EmptyState ──────────────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  color: var(--text-muted);
+}
+.emptyIconWrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-subtle) 100%);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+.emptyIcon { font-size: 2rem; line-height: 1; }
+.emptyTitle { font-weight: 700; font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+.emptyText { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+/* ── Modal ───────────────────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 25, 35, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+  animation: overlayIn 0.18s ease;
+  backdrop-filter: blur(3px);
+}
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid var(--border);
+}
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--bg) 0%, var(--surface) 100%);
+}
+.modalTitle { font-size: 1.05rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  font-family: inherit;
+}
+.modalClose:hover { background: var(--danger-bg); color: var(--danger); }
+.modalBody { padding: 1.5rem; }
+
+.confirmMessage {
+  margin-bottom: 1.25rem;
+  color: var(--text-secondary, #4b5563);
+  line-height: 1.5;
+}
+
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Alert ───────────────────────────────────────────────────────── */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  animation: slideDown 0.2s ease;
+}
+.alertError {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+}
+.alertSuccess {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1rem;
+  }
+  .cardHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+}

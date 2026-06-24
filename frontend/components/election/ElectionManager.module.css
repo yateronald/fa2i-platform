@@ -1,0 +1,823 @@
+.manager {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: fadeUp 0.3s ease;
+}
+
+.tabStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Header management window */
+.headerWindow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.85rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.windowIcon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────────── */
+.tabBar {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 2px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 0 0.5rem;
+}
+
+.tab {
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 0.75rem 1.1rem;
+  position: relative;
+  bottom: -2px;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+  white-space: nowrap;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.tab:hover {
+  color: var(--fa2i-orange);
+  background: var(--bg-subtle);
+}
+
+.tabActive {
+  color: var(--fa2i-green);
+  border-bottom-color: var(--fa2i-orange);
+  background: transparent;
+}
+
+/* ── Détails tab ─────────────────────────────────────────────────── */
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin: 0 0 1.25rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.detailLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.detailValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.modelHint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding: 0.85rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--fa2i-orange);
+  margin: 0;
+}
+
+/* ── Positions ───────────────────────────────────────────────────── */
+.positionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.positionBlock {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.1rem 1.25rem;
+  background: var(--bg);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.positionBlock:hover {
+  border-color: var(--fa2i-green-glow);
+  box-shadow: var(--shadow-xs);
+}
+
+.positionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.positionTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.positionName {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.positionWindow {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.noCandidates {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0.5rem 0 0;
+}
+
+/* ── Candidates ──────────────────────────────────────────────────── */
+.candidateList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.candidateRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.candidateRow:hover {
+  background: var(--bg-subtle);
+  border-color: var(--fa2i-green-glow);
+}
+
+.candidatePhoto {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+}
+
+.candidatePhotoPlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--fa2i-green), var(--fa2i-green-light));
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.candidateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.candidateActions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.candidateName {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.candidateMotivation {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+/* ── Participants toolbar + table ────────────────────────────────── */
+.toolbar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.table thead th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding: 0.75rem 0.9rem;
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.table tbody tr:hover {
+  background: var(--bg);
+}
+
+.tableMuted {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* ── Bulk import summary ─────────────────────────────────────────── */
+.summaryBox {
+  margin: 0.5rem 0 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.summaryLine {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.summaryFailed {
+  margin: 0.6rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  color: var(--danger);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* ── Association picker ──────────────────────────────────────────── */
+.pickerRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* ── Shared select (styled like inputs) ──────────────────────────── */
+.select {
+  flex: 1;
+  width: 100%;
+  padding: 0.65rem 0.875rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.select:focus {
+  border-color: var(--fa2i-green);
+  box-shadow: 0 0 0 3px rgba(30, 125, 64, 0.14);
+}
+
+/* ── Form actions ────────────────────────────────────────────────── */
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* ── Quota banner (participants tab) ─────────────────────────────── */
+.quotaBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0.7rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--fa2i-green);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ── Bulk import preview: invalid row status ─────────────────────── */
+.invalidCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.invalidError {
+  font-size: 0.78rem;
+  color: var(--danger);
+}
+
+/* ── Animation ───────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manager { animation: none; }
+}
+
+/* ── Responsive Mobile & Tablet Overrides ─────────────────────────── */
+@media (max-width: 768px) {
+  /* Convert tables into nice block cards on mobile/tablet viewports */
+  .tableWrap {
+    border: none;
+    overflow-x: visible;
+  }
+  
+  .table {
+    display: block;
+    width: 100%;
+  }
+  
+  .table thead {
+    display: none; /* Hide header columns */
+  }
+  
+  .table tbody,
+  .table tbody tr,
+  .table tbody td {
+    display: block;
+    width: 100%;
+  }
+  
+  .table tbody tr {
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.75rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-xs);
+  }
+  
+  .table tbody tr:hover {
+    background: var(--bg-subtle);
+  }
+  
+  .table tbody td {
+    text-align: right;
+    padding: 0.55rem 0;
+    position: relative;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.82rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .table tbody tr td:last-child {
+    border-bottom: none;
+  }
+  
+  .table tbody td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .tableMuted {
+    white-space: normal;
+  }
+  
+  .invalidCell {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+@media (max-width: 600px) {
+  .manager {
+    gap: 0.75rem;
+  }
+  
+  .tabStack {
+    gap: 0.75rem;
+  }
+  
+  .headerWindow {
+    font-size: 0.78rem;
+    align-items: flex-start;
+    line-height: 1.4;
+    padding-top: 0.75rem;
+  }
+  
+  .windowIcon {
+    margin-top: 0.1rem;
+  }
+  
+  /* Horizontal scroll for tabs */
+  .tabBar {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 0.25rem;
+    scrollbar-width: none;
+  }
+  
+  .tabBar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tab {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.82rem;
+    display: inline-block;
+  }
+  
+  /* Details Tab Grid layout */
+  .detailGrid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+  }
+  
+  .detailItem {
+    padding: 0.75rem;
+    gap: 0.25rem;
+  }
+  
+  .detailLabel {
+    font-size: 0.65rem;
+  }
+  
+  .detailValue {
+    font-size: 0.85rem;
+  }
+  
+  .modelHint {
+    font-size: 0.78rem;
+    padding: 0.75rem;
+  }
+  
+  /* Position blocks and headers */
+  .positionBlock {
+    padding: 0.85rem;
+  }
+  
+  .positionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .positionTitleRow {
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .positionWindow {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin: 0.35rem 0 0.65rem;
+  }
+  
+  .toolbar {
+    width: 100%;
+    gap: 0.5rem;
+  }
+  
+  .toolbar button,
+  .toolbar a,
+  .toolbar > div {
+    flex: 1;
+    width: 100%;
+  }
+  
+  /* Top-align candidate photo with description text */
+  .candidateRow {
+    align-items: flex-start;
+    padding: 0.65rem;
+    gap: 0.65rem;
+  }
+  
+  .candidatePhoto,
+  .candidatePhotoPlaceholder {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+  
+  .candidateName {
+    font-size: 0.85rem;
+  }
+  
+  .candidateMotivation {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+  
+  /* Picker / Select row */
+  .pickerRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .pickerRow button {
+    width: 100%;
+  }
+  
+  .quotaBanner {
+    font-size: 0.78rem;
+    padding: 0.6rem 0.85rem;
+    align-items: flex-start;
+  }
+}
+
+/* ── Add-from-members picker ─────────────────────────────────────── */
+.memberPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.membersNote {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Search field */
+.memberSearchRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.memberSearchIcon {
+  position: absolute;
+  left: 0.75rem;
+  font-size: 0.85rem;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.memberSearch {
+  width: 100%;
+  padding: 0.6rem 0.85rem 0.6rem 2.1rem;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--bg-subtle, #f9fafb);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.memberSearch:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--fa2i-green, #1f8a4c);
+  box-shadow: 0 0 0 3px var(--fa2i-green-glow, rgba(31, 138, 76, 0.15));
+}
+
+/* Toolbar: select-all + live count */
+.memberToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.memberSelectAll {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.memberSelectAll input {
+  width: 1.05rem;
+  height: 1.05rem;
+  cursor: pointer;
+  accent-color: var(--fa2i-green, #1f8a4c);
+}
+
+.memberCount {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.memberCount strong {
+  color: var(--fa2i-green, #1f8a4c);
+}
+
+/* Scrollable list */
+.memberList {
+  display: flex;
+  flex-direction: column;
+  max-height: 360px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  scrollbar-width: thin;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.memberItem:last-child {
+  border-bottom: none;
+}
+
+.memberItem:hover {
+  background: var(--bg-subtle, #f9fafb);
+}
+
+.memberItemSelected {
+  background: var(--fa2i-green-glow, rgba(31, 138, 76, 0.08));
+}
+
+.memberItemSelected:hover {
+  background: var(--fa2i-green-glow, rgba(31, 138, 76, 0.12));
+}
+
+.memberItemDisabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.memberItemDisabled:hover {
+  background: transparent;
+}
+
+.memberItemDisabled input {
+  cursor: not-allowed;
+}
+
+.memberBadgeAdded {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted, #6b7280);
+  background: var(--bg-subtle, #f1f5f9);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  white-space: nowrap;
+}
+
+.memberItem input {
+  width: 1.05rem;
+  height: 1.05rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: var(--fa2i-green, #1f8a4c);
+}
+
+/* Avatar with initial */
+.memberAvatar {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--fa2i-green, #1f8a4c);
+  background: var(--fa2i-green-glow, rgba(31, 138, 76, 0.12));
+  text-transform: uppercase;
+}
+
+.memberInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.memberName {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memberEmail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memberNoResult {
+  margin: 0;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}

@@ -1,0 +1,37 @@
+{
+  "name": "fa2i-platform-backend",
+  "version": "1.0.0",
+  "description": "FA2I Voting System - Backend API",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node --env-file=.env src/app.js",
+    "dev": "node --env-file=.env --watch src/app.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:property": "vitest run test/property",
+    "test:unit": "vitest run test/unit",
+    "test:integration": "vitest run test/integration",
+    "migrate": "node --env-file=.env src/db/migrate.js",
+    "test:email": "node --env-file=.env scripts/test-email.js"
+  },
+  "keywords": [
+    "fa2i",
+    "voting",
+    "election"
+  ],
+  "license": "PRIVATE",
+  "dependencies": {
+    "bcrypt": "5.1.1",
+    "cloudinary": "2.5.1",
+    "cookie-parser": "1.4.6",
+    "cors": "2.8.5",
+    "express": "4.21.2",
+    "jsonwebtoken": "9.0.2",
+    "nodemailer": "6.9.16",
+    "pg": "8.13.1"
+  },
+  "devDependencies": {
+    "fast-check": "3.23.2",
+    "vitest": "2.1.8"
+  }
+}

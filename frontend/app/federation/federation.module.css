@@ -1,0 +1,163 @@
+/* ── Stat cards ──────────────────────────────────────────────── */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.statCard {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+}
+.statCard:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.statCard::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--statAccent, var(--fa2i-green)), transparent);
+  opacity: 0.6;
+}
+.statCardGreen { --statAccent: var(--fa2i-green); }
+.statCardOrange { --statAccent: var(--fa2i-orange); }
+.statCardBlue { --statAccent: #2563eb; }
+
+.statIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.statIconGreen { background: var(--success-bg); }
+.statIconOrange { background: var(--warning-bg); }
+.statIconBlue { background: var(--info-bg); }
+
+.statNumber {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+.statNumberGreen { color: var(--fa2i-green); }
+.statNumberOrange { color: var(--fa2i-orange); }
+
+.statLabel {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ── Panel grid ──────────────────────────────────────────────── */
+.panelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.panelLink {
+  font-size: 0.8rem;
+  color: var(--fa2i-green);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color var(--transition-fast), gap var(--transition-fast);
+}
+.panelLink::after { content: '→'; transition: transform var(--transition-fast); }
+.panelLink:hover { color: var(--fa2i-green-dark); }
+.panelLink:hover::after { transform: translateX(3px); }
+
+/* ── Item list ───────────────────────────────────────────────── */
+.itemList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+.itemRow:last-child { border-bottom: none; padding-bottom: 0; }
+.itemRow:first-child { padding-top: 0; }
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* ── Logo thumbs ─────────────────────────────────────────────── */
+.logoThumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-xs);
+}
+
+.logoThumbPlaceholder {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--fa2i-green-light), var(--fa2i-green));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(30, 125, 64, 0.25);
+}
+
+/* ── Full-width panel (election-manager view) ────────────────── */
+.panelFull {
+  grid-column: 1 / -1;
+}

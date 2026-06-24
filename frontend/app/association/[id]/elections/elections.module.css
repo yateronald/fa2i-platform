@@ -1,0 +1,56 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.electionCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.electionMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.electionTop {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.electionName {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.zone {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+@media (max-width: 640px) {
+  .electionCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

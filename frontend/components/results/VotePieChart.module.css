@@ -1,0 +1,210 @@
+/* ════════════════════════════════════════════════════════════════════════
+ * VotePieChart — Premium styles
+ * ════════════════════════════════════════════════════════════════════════ */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+.chartArea {
+  display: flex;
+  justify-content: center;
+}
+
+.donutWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.donutWrap svg {
+  display: block;
+}
+
+/* Grow-in animation for slices */
+.slice {
+  transition: stroke-dasharray 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              stroke-width 0.2s ease;
+}
+
+.centerLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.centerValue {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.centerCaption {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.25rem;
+}
+
+.emptyDonut {
+  border-radius: 50%;
+  border: 14px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyText {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ── Legend ──────────────────────────────────────────── */
+.legendWrap {
+  width: 100%;
+}
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.legendItem:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border);
+}
+
+.legendLeader {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+/* ── Rank number ────────────────────────────────────── */
+.rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.legendLeader .rank {
+  background: var(--fa2i-orange);
+  color: #fff;
+}
+
+/* ── Legend photos ──────────────────────────────────── */
+.legendPhoto {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+}
+
+.legendPhotoFallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #fff;
+}
+
+/* ── Legend info ─────────────────────────────────────── */
+.legendInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.legendLabel {
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legendValue {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* ── Legend percentage + bar ─────────────────────────── */
+.legendPctWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  width: 70px;
+}
+
+.legendPct {
+  font-size: 0.88rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.legendBar {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+
+.legendBarFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
