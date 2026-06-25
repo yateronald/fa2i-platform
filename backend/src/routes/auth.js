@@ -127,6 +127,36 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 /**
+ * POST /auth/verify-reset-code
+ * Body: { email, code }
+ * Public. Verifies the emailed code WITHOUT consuming it, so the UI can confirm
+ * the code before showing the new-password step. After too many wrong attempts
+ * the code is invalidated (locked) and the user must request a new one.
+ */
+router.post('/verify-reset-code', async (req, res) => {
+  try {
+    const { email, code } = req.body || {};
+    if (!email || !code) {
+      return res.status(400).json({ error: 'Email et code sont requis.' });
+    }
+
+    const result = await passwordResetService.verifyResetCode(email, code);
+    if (!result.success) {
+      return res.status(400).json({
+        error: result.error,
+        locked: result.locked === true,
+        remainingAttempts:
+          typeof result.remainingAttempts === 'number' ? result.remainingAttempts : undefined,
+      });
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
  * POST /auth/reset-password
  * Body: { email, code, newPassword }
  * Public. Verifies the emailed code and sets a new permanent password.

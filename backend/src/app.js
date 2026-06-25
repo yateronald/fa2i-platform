@@ -66,6 +66,7 @@ function createApp() {
     '/login',
     '/logout',
     '/forgot-password',
+    '/verify-reset-code',
     '/reset-password',
   ]);
   app.use(

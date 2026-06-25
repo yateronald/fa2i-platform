@@ -27,7 +27,7 @@ const emailService = require('./emailService');
 
 const RESET_CODE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 const RESET_CODE_TTL_MIN = 15;
-const MAX_CODE_ATTEMPTS = 5;
+const MAX_CODE_ATTEMPTS = 3;
 const RESEND_COOLDOWN_MS = 60 * 1000; // 1 minute between sends
 const CODE_LENGTH = 6;
 
@@ -37,6 +37,7 @@ const DEFAULT_LOGO_PATH = path.join(__dirname, '..', 'assets', 'fa2i-logo.jpg');
 // Generic, non-revealing error returned for every "bad code / unknown user"
 // case so the two are indistinguishable to a caller.
 const GENERIC_CODE_ERROR = 'Code invalide ou expiré';
+const TOO_MANY_ERROR = 'Trop de tentatives. Veuillez demander un nouveau code.';
 
 /**
  * Generate a cryptographically-random numeric code of CODE_LENGTH digits.
@@ -207,8 +208,71 @@ async function resetPassword(email, code, newPassword, deps) {
   }, txOpts);
 }
 
+/**
+ * Verify a reset code WITHOUT consuming it or changing the password.
+ *
+ * This powers the dedicated "enter your code" step: the code is checked first,
+ * and only once it is confirmed valid does the UI advance to the new-password
+ * step. Wrong guesses increment the per-code attempt counter; on the
+ * MAX_CODE_ATTEMPTS-th wrong guess the code is invalidated (consumed) so the
+ * user must request a fresh one (`locked: true`).
+ *
+ * @param {string} email
+ * @param {string} code
+ * @param {object} [deps]
+ * @returns {Promise<{ success: true } | { success: false, error: string, locked?: boolean, remainingAttempts?: number }>}
+ */
+async function verifyResetCode(email, code, deps) {
+  const { usersRepo, resetRepo, cred, txRunner, txOpts } = resolveDeps(deps);
+
+  const emailLower = String(email == null ? '' : email).toLowerCase().trim();
+  const submittedCode = String(code == null ? '' : code).trim();
+
+  if (!emailLower || !submittedCode) {
+    return { success: false, error: GENERIC_CODE_ERROR };
+  }
+
+  return txRunner(async (client) => {
+    const user = await usersRepo.findByEmail(client, emailLower); // active only
+    if (!user) {
+      // Non-revealing: behave like a wrong/expired code.
+      return { success: false, error: GENERIC_CODE_ERROR };
+    }
+
+    const record = await resetRepo.findLatestActiveByUser(client, user.id);
+    if (!record) {
+      // No active code (never requested, expired, or already consumed).
+      return { success: false, error: TOO_MANY_ERROR, locked: true };
+    }
+
+    if (record.attempts >= MAX_CODE_ATTEMPTS) {
+      await resetRepo.consume(client, record.id);
+      return { success: false, error: TOO_MANY_ERROR, locked: true };
+    }
+
+    const matches = await cred.verifyPassword(submittedCode, record.code_hash);
+    if (!matches) {
+      const attempts = await resetRepo.incrementAttempts(client, record.id);
+      if (attempts >= MAX_CODE_ATTEMPTS) {
+        // Final wrong attempt — invalidate the code; force regeneration.
+        await resetRepo.consume(client, record.id);
+        return { success: false, error: TOO_MANY_ERROR, locked: true };
+      }
+      return {
+        success: false,
+        error: GENERIC_CODE_ERROR,
+        remainingAttempts: MAX_CODE_ATTEMPTS - attempts,
+      };
+    }
+
+    // Valid — do NOT consume; the subsequent resetPassword call consumes it.
+    return { success: true };
+  }, txOpts);
+}
+
 module.exports = {
   requestReset,
+  verifyResetCode,
   resetPassword,
   generateCode,
   RESET_CODE_TTL_MIN,
