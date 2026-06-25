@@ -42,30 +42,21 @@ export default function VotePage({ params }) {
       const electionData = await apiClient.get(`/elections/${id}`);
       setElection(electionData.election || electionData);
 
-      const positionsData = await apiClient.get(`/elections/${id}/positions`);
+      // Single request returns positions WITH their candidates (avoids N+1 —
+      // faster on mobile networks).
+      const positionsData = await apiClient.get(
+        `/elections/${id}/positions?include=candidates`
+      );
       const positionsList = positionsData.positions || positionsData || [];
 
       // Only published posts (state PENDING/OPEN/CLOSED) appear on the voter
       // ballot. Drafts (published === false / state === 'DRAFT') are excluded.
-      const publishedPositions = positionsList.filter(
-        (position) => position.published === true
-      );
-
-      const positionsWithCandidates = await Promise.all(
-        publishedPositions.map(async (position) => {
-          try {
-            const candidatesData = await apiClient.get(
-              `/elections/${id}/positions/${position.id}/candidates`
-            );
-            return {
-              ...position,
-              candidates: candidatesData.candidates || candidatesData || [],
-            };
-          } catch {
-            return { ...position, candidates: [] };
-          }
-        })
-      );
+      const positionsWithCandidates = positionsList
+        .filter((position) => position.published === true)
+        .map((position) => ({
+          ...position,
+          candidates: position.candidates || [],
+        }));
 
       setPositions(positionsWithCandidates);
     } catch (err) {

@@ -332,9 +332,9 @@ export default function FederationVotersPage({ params }) {
                             <tbody>
                               {voters.map((v) => (
                                 <tr key={v.user_id}>
-                                  <td>{v.full_name || <span className={styles.muted}>—</span>}</td>
-                                  <td>{v.email || <span className={styles.muted}>—</span>}</td>
-                                  <td>
+                                  <td data-label="Nom complet">{v.full_name || <span className={styles.muted}>—</span>}</td>
+                                  <td data-label="Email">{v.email || <span className={styles.muted}>—</span>}</td>
+                                  <td data-label="Ajouté le">
                                     {v.added_at
                                       ? new Date(v.added_at).toLocaleString('fr-FR')
                                       : <span className={styles.muted}>—</span>}

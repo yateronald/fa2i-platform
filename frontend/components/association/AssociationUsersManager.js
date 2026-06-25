@@ -276,7 +276,7 @@ export default function AssociationUsersManager({ associationId }) {
                   const isSelf = currentUser && u.id === currentUser.id;
                   return (
                     <tr key={u.id}>
-                      <td>
+                      <td data-label="Nom complet">
                         <span className={styles.name}>{u.full_name || '—'}</span>
                         {u.is_temporary_password && (
                           <span className={styles.tempPwd} title="Mot de passe temporaire non encore changé">
@@ -284,8 +284,8 @@ export default function AssociationUsersManager({ associationId }) {
                           </span>
                         )}
                       </td>
-                      <td className={styles.emailCell}>{u.email}</td>
-                      <td>
+                      <td className={styles.emailCell} data-label="Email">{u.email}</td>
+                      <td data-label="Rôle">
                         <div className={styles.badges}>
                           <Badge variant={u.role === 'ASSOCIATION_MANAGER' ? 'open' : 'neutral'}>
                             {roleLabel(u.role)}
@@ -298,14 +298,14 @@ export default function AssociationUsersManager({ associationId }) {
                           )}
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Statut">
                         {u.is_active ? (
                           <Badge variant="open">Actif</Badge>
                         ) : (
                           <Badge variant="closed">Désactivé</Badge>
                         )}
                       </td>
-                      <td>
+                      <td data-label="Actions">
                         <div className={styles.actions}>
                           {isSelf ? (
                             <span className={styles.selfLabel}>Vous</span>

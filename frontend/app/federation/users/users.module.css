@@ -150,14 +150,39 @@
 }
 
 @media (max-width: 600px) {
+  .list {
+    gap: 0.7rem;
+    margin-top: 0.75rem;
+  }
   .row {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-    padding: 1rem 0;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .row:hover {
+    background: var(--surface);
+  }
+  .row:last-child {
+    padding-bottom: 0.9rem;
+  }
+  /* Let long emails wrap instead of truncating on small screens */
+  .email {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   .actions {
     width: 100%;
-    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  .actions button {
+    flex: 1 1 auto;
   }
 }

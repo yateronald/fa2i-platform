@@ -330,7 +330,7 @@ export default function MembersPage() {
               <tbody>
                 {members.map((m) => (
                   <tr key={m.user_id} className={m.is_active ? undefined : styles.disabledRow}>
-                    <td>
+                    <td data-label="Nom complet">
                       <span className={styles.name}>{m.full_name || '—'}</span>
                       {m.is_temporary_password && (
                         <span className={styles.tempPwd} title="Mot de passe temporaire non encore changé">
@@ -338,19 +338,19 @@ export default function MembersPage() {
                         </span>
                       )}
                     </td>
-                    <td className={styles.emailCell}>{m.email}</td>
-                    <td className={styles.emailCell}>{m.phone || '—'}</td>
-                    <td>
+                    <td className={styles.emailCell} data-label="Email">{m.email}</td>
+                    <td className={styles.emailCell} data-label="Téléphone">{m.phone || '—'}</td>
+                    <td data-label="Statut">
                       {m.is_active ? (
                         <Badge variant="open">Actif</Badge>
                       ) : (
                         <Badge variant="closed">Désactivé</Badge>
                       )}
                     </td>
-                    <td className={styles.emailCell}>
+                    <td className={styles.emailCell} data-label="Ajouté le">
                       {m.added_at ? new Date(m.added_at).toLocaleString('fr-FR') : '—'}
                     </td>
-                    <td>
+                    <td data-label="Actions">
                       <div className={styles.actions}>
                         <Button variant="outline" onClick={() => openEdit(m)}>
                           Modifier
@@ -483,9 +483,9 @@ export default function MembersPage() {
                   <tbody>
                     {previewRows.map((r, i) => (
                       <tr key={`${r.email || 'row'}-${i}`}>
-                        <td>{r.fullName || <span className={styles.muted}>—</span>}</td>
-                        <td>{r.email || <span className={styles.muted}>—</span>}</td>
-                        <td>{r.phone || <span className={styles.muted}>—</span>}</td>
+                        <td data-label="Nom complet">{r.fullName || <span className={styles.muted}>—</span>}</td>
+                        <td data-label="Email">{r.email || <span className={styles.muted}>—</span>}</td>
+                        <td data-label="Téléphone">{r.phone || <span className={styles.muted}>—</span>}</td>
                       </tr>
                     ))}
                   </tbody>

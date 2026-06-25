@@ -119,8 +119,108 @@
   color: var(--text);
 }
 
+/* ── Mobile / tablet: table becomes labelled cards ───────────────── */
 @media (max-width: 640px) {
+  .tableWrap {
+    border: none;
+    overflow-x: visible;
+    border-radius: 0;
+    margin-top: 0.25rem;
+  }
+
+  /* Hide the header row visually (kept for screen readers) */
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    padding: 0.25rem 0.9rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .table td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border: none;
+    text-align: right;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Subtle separators between fields inside a card */
+  .table td + td {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .name {
+    display: inline;
+  }
+
+  .badges {
+    justify-content: flex-end;
+  }
+
+  /* Actions cell: label on its own line, full-width tappable buttons below */
+  .table td:has(.actions) {
+    display: block;
+    text-align: left;
+  }
+
+  .table td:has(.actions)::before {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
   .actions {
     justify-content: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .table td:has(.actions) .actions button {
+    flex: 1 1 auto;
+  }
+
+  .selfLabel {
+    display: inline-block;
   }
 }
