@@ -443,6 +443,7 @@ export default function MembersPage() {
         open={importOpen}
         title="Importer des membres (CSV / Excel)"
         onClose={() => setImportOpen(false)}
+        size="lg"
       >
         <div className={styles.form}>
           {importError && <Alert>{importError}</Alert>}

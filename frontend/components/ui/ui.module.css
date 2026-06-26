@@ -236,6 +236,9 @@
   animation: modalIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid var(--border);
 }
+.modalLg {
+  max-width: 820px;
+}
 .modalHeader {
   display: flex;
   align-items: center;
