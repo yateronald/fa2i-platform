@@ -103,7 +103,127 @@
 }
 
 .actionsCol {
-  text-align: right;
+  text-align: center;
+  width: 60px;
+}
+
+/* ── Three-dot action menu ────────────────────────────────────────── */
+.menuWrap {
+  position: relative;
+  display: inline-block;
+}
+
+.menuTrigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.menuTrigger:hover,
+.menuTrigger[aria-expanded="true"] {
+  border-color: var(--fa2i-green);
+  color: var(--fa2i-green);
+  background: rgba(30, 125, 64, 0.07);
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 200;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.13), 0 1px 4px rgba(0, 0, 0, 0.07);
+  min-width: 170px;
+  overflow: hidden;
+  animation: dropIn 0.13s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.83rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.dropdownItem:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.dropdownItem:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.dropdownItemWarn:hover:not(:disabled) {
+  color: var(--fa2i-orange);
+  background: rgba(230, 120, 30, 0.05);
+}
+
+.dropdownItemActivate {
+  color: var(--fa2i-green);
+}
+
+.dropdownItemActivate:hover:not(:disabled) {
+  color: var(--fa2i-green);
+  background: rgba(30, 125, 64, 0.06);
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0.2rem 0;
+}
+
+.dropdownItemDelete {
+  color: var(--text-muted);
+}
+
+.dropdownItemDelete:hover:not(:disabled) {
+  color: var(--danger, #dc2626);
+  background: rgba(220, 38, 38, 0.05);
+}
+
+/* legacy — kept for mobile card layout */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 /* ── Cell content ─────────────────────────────────────────────────── */

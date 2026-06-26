@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiClient } from '@/lib/apiClient';
 import { parseParticipantFile } from '@/lib/participantImport';
 import { Card, CardHeader } from '@/components/ui/Card';
@@ -63,6 +63,23 @@ export default function MembersPage() {
 
   // Enable/disable state (tracks the member currently being toggled)
   const [togglingId, setTogglingId] = useState(null);
+
+  // Row action dropdown
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const menuRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenuId(null);
+      }
+    }
+    if (openMenuId !== null) {
+      document.addEventListener('mousedown', handleOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [openMenuId]);
 
   const fetchMembers = useCallback(async () => {
     setLoading(true);
@@ -325,12 +342,12 @@ export default function MembersPage() {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th style={{ width: '22%' }}>Nom complet</th>
-                    <th style={{ width: '26%' }}>Email</th>
-                    <th style={{ width: '10%' }}>Téléphone</th>
+                    <th style={{ width: '24%' }}>Nom complet</th>
+                    <th style={{ width: '27%' }}>Email</th>
+                    <th style={{ width: '13%' }}>Téléphone</th>
                     <th style={{ width: '9%' }}>Statut</th>
-                    <th style={{ width: '16%' }}>Ajouté le</th>
-                    <th style={{ width: '17%' }} className={styles.actionsCol}>Actions</th>
+                    <th style={{ width: '19%' }}>Ajouté le</th>
+                    <th style={{ width: '8%' }} className={styles.actionsCol}>Actions</th>
                   </tr>
                 </thead>
               </table>
@@ -340,12 +357,12 @@ export default function MembersPage() {
             <div className={styles.tableBodyWrap}>
               <table className={styles.table}>
                 <colgroup>
-                  <col style={{ width: '22%' }} />
-                  <col style={{ width: '26%' }} />
-                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '24%' }} />
+                  <col style={{ width: '27%' }} />
+                  <col style={{ width: '13%' }} />
                   <col style={{ width: '9%' }} />
-                  <col style={{ width: '16%' }} />
-                  <col style={{ width: '17%' }} />
+                  <col style={{ width: '19%' }} />
+                  <col style={{ width: '8%' }} />
                 </colgroup>
                 <tbody>
                   {members
@@ -379,37 +396,58 @@ export default function MembersPage() {
                             })
                           : '—'}
                       </td>
-                      <td data-label="Actions">
-                        <div className={styles.actions}>
+                      <td data-label="Actions" className={styles.actionsCol}>
+                        <div
+                          className={styles.menuWrap}
+                          ref={openMenuId === m.user_id ? menuRef : null}
+                        >
                           <button
-                            className={`${styles.actionBtn} ${styles.actionBtnEdit}`}
-                            onClick={() => openEdit(m)}
-                            title="Modifier ce membre"
+                            className={styles.menuTrigger}
+                            aria-label="Actions"
+                            aria-expanded={openMenuId === m.user_id}
+                            onClick={() =>
+                              setOpenMenuId(openMenuId === m.user_id ? null : m.user_id)
+                            }
                           >
-                            ✎ Modifier
+                            ⋯
                           </button>
-                          <button
-                            className={`${styles.actionBtn} ${m.is_active ? styles.actionBtnToggle : styles.actionBtnActivate}`}
-                            onClick={() => toggleActive(m)}
-                            disabled={togglingId === m.user_id}
-                            title={m.is_active ? 'Désactiver ce membre' : 'Activer ce membre'}
-                          >
-                            {togglingId === m.user_id
-                              ? '⋯'
-                              : m.is_active
-                              ? '○ Désactiver'
-                              : '● Activer'}
-                          </button>
-                          <button
-                            className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
-                            onClick={() => {
-                              setDError('');
-                              setDeleteMember(m);
-                            }}
-                            title="Supprimer ce membre"
-                          >
-                            ✕ Supprimer
-                          </button>
+                          {openMenuId === m.user_id && (
+                            <div className={styles.dropdown} role="menu">
+                              <button
+                                className={styles.dropdownItem}
+                                role="menuitem"
+                                onClick={() => { openEdit(m); setOpenMenuId(null); }}
+                              >
+                                ✎ Modifier
+                              </button>
+                              <button
+                                className={`${styles.dropdownItem} ${
+                                  m.is_active ? styles.dropdownItemWarn : styles.dropdownItemActivate
+                                }`}
+                                role="menuitem"
+                                onClick={() => { toggleActive(m); setOpenMenuId(null); }}
+                                disabled={togglingId === m.user_id}
+                              >
+                                {togglingId === m.user_id
+                                  ? '⋯ En cours…'
+                                  : m.is_active
+                                  ? '○ Désactiver'
+                                  : '● Activer'}
+                              </button>
+                              <div className={styles.dropdownDivider} />
+                              <button
+                                className={`${styles.dropdownItem} ${styles.dropdownItemDelete}`}
+                                role="menuitem"
+                                onClick={() => {
+                                  setDError('');
+                                  setDeleteMember(m);
+                                  setOpenMenuId(null);
+                                }}
+                              >
+                                ✕ Supprimer
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </td>
                     </tr>
