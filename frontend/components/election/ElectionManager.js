@@ -705,18 +705,20 @@ function PositionsTab({ positions, electionEnded, currentUser, onAddPosition, on
                           </div>
                           {isDraft && !electionEnded && ownsCandidate(currentUser, cand) && (
                             <div className={styles.candidateActions}>
-                              <Button
-                                variant="ghost"
+                              <button
+                                className={styles.actionBtnEdit}
                                 onClick={() => onEditCandidate(pos.id, cand)}
+                                title="Modifier ce candidat"
                               >
-                                Modifier
-                              </Button>
-                              <Button
-                                variant="ghost"
+                                ✎ Modifier
+                              </button>
+                              <button
+                                className={styles.actionBtnDelete}
                                 onClick={() => onDeleteCandidate(pos.id, cand)}
+                                title="Supprimer ce candidat"
                               >
-                                Supprimer
-                              </Button>
+                                ✕ Supprimer
+                              </button>
                             </div>
                           )}
                         </div>
@@ -814,11 +816,11 @@ function ParticipantsTab({
                 <thead>
                   <tr>
                     <th style={{ width: '20%' }}>Nom complet</th>
-                    <th style={{ width: '28%' }}>Email</th>
-                    <th style={{ width: '16%' }}>Association</th>
-                    <th style={{ width: '10%' }}>Rôle</th>
-                    <th style={{ width: '16%' }}>Ajouté le</th>
-                    <th style={{ width: '10%' }}>Actions</th>
+                    <th style={{ width: '27%' }}>Email</th>
+                    <th style={{ width: '13%' }}>Association</th>
+                    <th style={{ width: '9%' }}>Rôle</th>
+                    <th style={{ width: '20%' }}>Ajouté le</th>
+                    <th style={{ width: '11%' }}>Actions</th>
                   </tr>
                 </thead>
               </table>
@@ -829,11 +831,11 @@ function ParticipantsTab({
               <table className={styles.table}>
                 <colgroup>
                   <col style={{ width: '20%' }} />
-                  <col style={{ width: '28%' }} />
-                  <col style={{ width: '16%' }} />
-                  <col style={{ width: '10%' }} />
-                  <col style={{ width: '16%' }} />
-                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '27%' }} />
+                  <col style={{ width: '13%' }} />
+                  <col style={{ width: '9%' }} />
+                  <col style={{ width: '20%' }} />
+                  <col style={{ width: '11%' }} />
                 </colgroup>
                 <tbody>
                   {participants
@@ -850,9 +852,13 @@ function ParticipantsTab({
                           : '—'}
                       </td>
                       <td data-label="Actions">
-                        <Button size="sm" variant="ghost" onClick={() => onRemoveParticipant(p)}>
-                          Retirer
-                        </Button>
+                        <button
+                          className={styles.actionBtnDelete}
+                          onClick={() => onRemoveParticipant(p)}
+                          title="Retirer ce participant"
+                        >
+                          ✕ Retirer
+                        </button>
                       </td>
                     </tr>
                   ))}

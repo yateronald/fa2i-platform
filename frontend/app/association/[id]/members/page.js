@@ -326,11 +326,11 @@ export default function MembersPage() {
                 <thead>
                   <tr>
                     <th style={{ width: '22%' }}>Nom complet</th>
-                    <th style={{ width: '25%' }}>Email</th>
-                    <th style={{ width: '13%' }}>Téléphone</th>
+                    <th style={{ width: '26%' }}>Email</th>
+                    <th style={{ width: '10%' }}>Téléphone</th>
                     <th style={{ width: '9%' }}>Statut</th>
-                    <th style={{ width: '13%' }}>Ajouté le</th>
-                    <th style={{ width: '18%' }} className={styles.actionsCol}>Actions</th>
+                    <th style={{ width: '16%' }}>Ajouté le</th>
+                    <th style={{ width: '17%' }} className={styles.actionsCol}>Actions</th>
                   </tr>
                 </thead>
               </table>
@@ -341,11 +341,11 @@ export default function MembersPage() {
               <table className={styles.table}>
                 <colgroup>
                   <col style={{ width: '22%' }} />
-                  <col style={{ width: '25%' }} />
-                  <col style={{ width: '13%' }} />
+                  <col style={{ width: '26%' }} />
+                  <col style={{ width: '10%' }} />
                   <col style={{ width: '9%' }} />
-                  <col style={{ width: '13%' }} />
-                  <col style={{ width: '18%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '17%' }} />
                 </colgroup>
                 <tbody>
                   {members
@@ -369,36 +369,47 @@ export default function MembersPage() {
                           <Badge variant="closed">Désactivé</Badge>
                         )}
                       </td>
-                      <td className={styles.emailCell} data-label="Ajouté le">
-                        {m.added_at ? new Date(m.added_at).toLocaleString('fr-FR') : '—'}
+                      <td className={styles.dateCell} data-label="Ajouté le">
+                        {m.added_at
+                          ? new Date(m.added_at).toLocaleDateString('fr-FR', {
+                              day: '2-digit', month: '2-digit', year: 'numeric',
+                            }) + ' ' +
+                            new Date(m.added_at).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit', minute: '2-digit',
+                            })
+                          : '—'}
                       </td>
                       <td data-label="Actions">
                         <div className={styles.actions}>
-                          <Button variant="outline" size="sm" onClick={() => openEdit(m)}>
-                            Modifier
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
+                          <button
+                            className={`${styles.actionBtn} ${styles.actionBtnEdit}`}
+                            onClick={() => openEdit(m)}
+                            title="Modifier ce membre"
+                          >
+                            ✎ Modifier
+                          </button>
+                          <button
+                            className={`${styles.actionBtn} ${m.is_active ? styles.actionBtnToggle : styles.actionBtnActivate}`}
                             onClick={() => toggleActive(m)}
                             disabled={togglingId === m.user_id}
+                            title={m.is_active ? 'Désactiver ce membre' : 'Activer ce membre'}
                           >
                             {togglingId === m.user_id
-                              ? '...'
+                              ? '⋯'
                               : m.is_active
-                              ? 'Désactiver'
-                              : 'Activer'}
-                          </Button>
-                          <Button
-                            variant="danger"
-                            size="sm"
+                              ? '○ Désactiver'
+                              : '● Activer'}
+                          </button>
+                          <button
+                            className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
                             onClick={() => {
                               setDError('');
                               setDeleteMember(m);
                             }}
+                            title="Supprimer ce membre"
                           >
-                            Supprimer
-                          </Button>
+                            ✕ Supprimer
+                          </button>
                         </div>
                       </td>
                     </tr>
