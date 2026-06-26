@@ -129,17 +129,24 @@ async function requestReset(email, deps) {
     };
   }, txOpts);
 
-  // Send the email AFTER the transaction commits (network I/O outside the tx).
+  // Send the email in the BACKGROUND (do not await) so the HTTP response
+  // returns immediately — SMTP latency must not block the user. The flow is
+  // non-revealing, so send failures are intentionally swallowed.
   if (sendPayload) {
-    try {
-      await emailSvc.sendPasswordReset(sendPayload.accountHolder, sendPayload.identifier, sendPayload.code, {
-        ...(deps && deps.emailDeps),
-        ttlMinutes: RESET_CODE_TTL_MIN,
-        ...sendPayload.branding,
-      });
-    } catch {
-      // Never reveal send failures to the caller (non-revealing).
-    }
+    Promise.resolve(
+      emailSvc.sendPasswordReset(
+        sendPayload.accountHolder,
+        sendPayload.identifier,
+        sendPayload.code,
+        {
+          ...(deps && deps.emailDeps),
+          ttlMinutes: RESET_CODE_TTL_MIN,
+          ...sendPayload.branding,
+        }
+      )
+    ).catch(() => {
+      /* non-revealing: ignore background send failures */
+    });
   }
 
   return { success: true };

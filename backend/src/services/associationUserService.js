@@ -157,6 +157,8 @@ async function createAssociationUser(identity, input, deps) {
 
   const emailLower = email.toLowerCase();
 
+  let emailPayload = null;
+
   const result = await txRunner(async (client) => {
     // The resolved target association must exist.
     const assoc = await assocRepo.findById(client, targetAssociationId);
@@ -184,12 +186,15 @@ async function createAssociationUser(identity, input, deps) {
       canManageMembers,
     });
 
-    // Brand the credentials email with the target association's own logo + name.
-    await emailSvc.sendCredentials(fullName, email, tempPassword, {
-      ...(emailDeps || {}),
+    // Capture what we need to email AFTER the transaction commits (sending SMTP
+    // inside the transaction would hold a DB connection during slow network I/O).
+    emailPayload = {
+      fullName,
+      email,
+      tempPassword,
       logoUrl: assoc.logo_ref || null,
       brandName: assoc.name || 'FA2I',
-    });
+    };
 
     return {
       success: true,
@@ -206,6 +211,21 @@ async function createAssociationUser(identity, input, deps) {
       },
     };
   }, txOpts);
+
+  // Send the branded credentials email in the BACKGROUND so the HTTP response
+  // returns immediately (SMTP latency must not block creating the user).
+  if (result && result.success && emailPayload) {
+    Promise.resolve(
+      emailSvc.sendCredentials(emailPayload.fullName, emailPayload.email, emailPayload.tempPassword, {
+        ...(emailDeps || {}),
+        logoUrl: emailPayload.logoUrl,
+        brandName: emailPayload.brandName,
+      })
+    ).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('[email] association-user credential send failed:', err && err.message);
+    });
+  }
 
   return result;
 }

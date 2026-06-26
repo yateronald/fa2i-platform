@@ -161,7 +161,9 @@ async function addMemberInternal(identity, input, resolved) {
     input.phone != null && String(input.phone).trim() !== '' ? String(input.phone).trim() : null;
   const emailLower = String(email).toLowerCase();
 
-  return txRunner(async (client) => {
+  let emailPayload = null;
+
+  const result = await txRunner(async (client) => {
     // 1. Resolve or create the user account.
     const existing = await usersRepo.findAnyByEmail(client, emailLower);
 
@@ -186,13 +188,15 @@ async function addMemberInternal(identity, input, resolved) {
       userId = newUser.id;
       created = true;
 
-      // Brand the credentials email with the association's own logo + name.
+      // Capture branding to email AFTER commit (no SMTP inside the transaction).
       const assoc = await assocRepo.findById(client, associationId);
-      await emailSvc.sendCredentials(fullName, email, tempPassword, {
-        ...(emailDeps || {}),
+      emailPayload = {
+        fullName,
+        email,
+        tempPassword,
         logoUrl: (assoc && assoc.logo_ref) || null,
         brandName: (assoc && assoc.name) || 'FA2I',
-      });
+      };
     }
 
     // 2. Reject when the user is already a member of this association.
@@ -211,6 +215,23 @@ async function addMemberInternal(identity, input, resolved) {
       member: { user_id: userId, email, full_name: fullName, phone: created ? phone : undefined },
     };
   }, txOpts);
+
+  // Send the credentials email in the BACKGROUND so the response is not blocked
+  // by SMTP latency. Only newly-created accounts get an email.
+  if (result && result.success && emailPayload) {
+    Promise.resolve(
+      emailSvc.sendCredentials(emailPayload.fullName, emailPayload.email, emailPayload.tempPassword, {
+        ...(emailDeps || {}),
+        logoUrl: emailPayload.logoUrl,
+        brandName: emailPayload.brandName,
+      })
+    ).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('[email] member credential send failed:', err && err.message);
+    });
+  }
+
+  return result;
 }
 
 /**

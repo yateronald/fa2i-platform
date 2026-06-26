@@ -119,12 +119,19 @@ function resolveLogo(deps) {
 }
 
 /**
- * Create the SMTP transporter (Hostinger).
- * Extracted so it can be overridden in tests via dependency injection.
+ * Create (and cache) the SMTP transporter (Hostinger).
+ *
+ * Uses a pooled, IPv4 connection so repeated sends reuse an open socket instead
+ * of doing a fresh TLS handshake + AUTH every time (which was making each email
+ * take many seconds). Forcing IPv4 avoids the slow IPv6-connect-then-fallback
+ * observed with Hostinger. Timeouts keep a stuck connection from hanging the
+ * caller. Extracted/overridable for tests via dependency injection.
  */
+let _cachedTransporter = null;
 function createTransporter() {
+  if (_cachedTransporter) return _cachedTransporter;
   const port = Number(process.env.SMTP_PORT) || 587;
-  return nodemailer.createTransport({
+  _cachedTransporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port,
     secure: port === 465, // true for 465, false for 587 (STARTTLS)
@@ -132,7 +139,18 @@ function createTransporter() {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
     },
+    // Connection reuse — avoids reconnecting on every email.
+    pool: true,
+    maxConnections: 3,
+    maxMessages: 100,
+    // Prefer IPv4 (skip the slow IPv6 attempt + fallback).
+    family: 4,
+    // Fail fast instead of hanging if SMTP is unreachable.
+    connectionTimeout: 10000,
+    greetingTimeout: 8000,
+    socketTimeout: 20000,
   });
+  return _cachedTransporter;
 }
 
 /**

@@ -39,11 +39,26 @@ const membersRouter = require('./routes/members');
 function createApp() {
   const app = express();
 
-  // CORS — allow the frontend origin to make credentialed requests
-  app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true, // allow cookies to be sent cross-origin
-  }));
+  // CORS — allow one or more frontend origins to make credentialed requests.
+  // FRONTEND_URL may be a comma-separated list (e.g. to allow both the apex and
+  // www domains). Origins are compared case-insensitively, ignoring a trailing
+  // slash. Requests with no Origin header (server-to-server, health checks) are
+  // allowed through.
+  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
+    .split(',')
+    .map((o) => o.trim().replace(/\/+$/, '').toLowerCase())
+    .filter(Boolean);
+
+  app.use(
+    cors({
+      origin(origin, callback) {
+        if (!origin) return callback(null, true);
+        const normalized = origin.replace(/\/+$/, '').toLowerCase();
+        return callback(null, allowedOrigins.includes(normalized));
+      },
+      credentials: true, // allow cookies to be sent cross-origin
+    })
+  );
 
   // Body parsing and cookie parsing
   app.use(express.json({ limit: '10mb' }));
