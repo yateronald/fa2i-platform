@@ -1,6 +1,6 @@
 import styles from './ui.module.css';
 
-export function Button({ variant = 'primary', block = false, className = '', ...props }) {
+export function Button({ variant = 'primary', size, block = false, className = '', ...props }) {
   const variantClass = {
     primary: styles.btnPrimary,
     secondary: styles.btnSecondary,
@@ -8,9 +8,10 @@ export function Button({ variant = 'primary', block = false, className = '', ...
     ghost: styles.btnGhost,
     danger: styles.btnDanger,
   }[variant] || styles.btnPrimary;
+  const sizeClass = size === 'sm' ? styles.btnSm : '';
   return (
     <button
-      className={`${styles.btn} ${variantClass} ${block ? styles.btnBlock : ''} ${className}`}
+      className={`${styles.btn} ${variantClass} ${sizeClass} ${block ? styles.btnBlock : ''} ${className}`}
       {...props}
     />
   );

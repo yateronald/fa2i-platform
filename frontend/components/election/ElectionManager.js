@@ -81,6 +81,10 @@ export default function ElectionManager({ electionId }) {
   const [activeCandidate, setActiveCandidate] = useState(null);
   const [membersBusy, setMembersBusy] = useState(false);
 
+  // Pagination for participants table
+  const PART_PAGE_SIZE = 10;
+  const [partPage, setPartPage] = useState(1);
+
   // Confirmation dialog state. `confirm.action` is the async function run when
   // the user clicks the confirm button.
   const [confirm, setConfirm] = useState(null);
@@ -431,6 +435,9 @@ export default function ElectionManager({ electionId }) {
           onAllMembers={handleAddAllMembers}
           onRemoveParticipant={handleRemoveParticipant}
           membersBusy={membersBusy}
+          partPage={partPage}
+          setPartPage={setPartPage}
+          partPageSize={PART_PAGE_SIZE}
         />
       )}
 
@@ -618,8 +625,9 @@ function PositionsTab({ positions, electionEnded, currentUser, onAddPosition, on
           text="Ajoutez un poste pour commencer à organiser cette élection."
         />
       ) : (
-        <div className={styles.positionList}>
-          {positions.map((pos) => {
+        <div className={styles.positionListWrap}>
+          <div className={styles.positionList}>
+            {positions.map((pos) => {
             const isDraft = pos.state === 'DRAFT' || !pos.published;
             const voteWindow = windowLabel(pos.start_at, pos.end_at, pos.schedule_timezone);
             return (
@@ -719,6 +727,7 @@ function PositionsTab({ positions, electionEnded, currentUser, onAddPosition, on
               </div>
             );
           })}
+          </div>
         </div>
       )}
     </Card>
@@ -738,6 +747,9 @@ function ParticipantsTab({
   onAllMembers,
   onRemoveParticipant,
   membersBusy,
+  partPage,
+  setPartPage,
+  partPageSize,
 }) {
   const quota =
     isFederation && typeof election.voters_per_association === 'number'
@@ -795,39 +807,110 @@ function ParticipantsTab({
             }
           />
         ) : (
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Nom complet</th>
-                  <th>Email</th>
-                  <th>Association</th>
-                  <th>Rôle</th>
-                  <th>Ajouté le</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {participants.map((p) => (
-                  <tr key={p.user_id}>
-                    <td data-label="Nom complet">{p.full_name || '—'}</td>
-                    <td data-label="Email">{p.email}</td>
-                    <td data-label="Association" className={styles.tableMuted}>{p.association_name || '—'}</td>
-                    <td data-label="Rôle">{p.role ? <Badge variant="neutral">{p.role}</Badge> : '—'}</td>
-                    <td data-label="Ajouté le" className={styles.tableMuted}>
-                      {p.added_at
-                        ? formatDisplayTime(p.added_at, election.schedule_timezone).text
-                        : '—'}
-                    </td>
-                    <td data-label="Actions">
-                      <Button variant="ghost" onClick={() => onRemoveParticipant(p)}>
-                        Retirer
-                      </Button>
-                    </td>
+          <div className={styles.tableContainer}>
+            {/* Fixed column header */}
+            <div className={styles.tableHeaderWrap}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={{ width: '20%' }}>Nom complet</th>
+                    <th style={{ width: '28%' }}>Email</th>
+                    <th style={{ width: '16%' }}>Association</th>
+                    <th style={{ width: '10%' }}>Rôle</th>
+                    <th style={{ width: '16%' }}>Ajouté le</th>
+                    <th style={{ width: '10%' }}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+              </table>
+            </div>
+
+            {/* Scrollable rows */}
+            <div className={styles.tableBodyWrap}>
+              <table className={styles.table}>
+                <colgroup>
+                  <col style={{ width: '20%' }} />
+                  <col style={{ width: '28%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '10%' }} />
+                </colgroup>
+                <tbody>
+                  {participants
+                    .slice((partPage - 1) * partPageSize, partPage * partPageSize)
+                    .map((p) => (
+                    <tr key={p.user_id}>
+                      <td data-label="Nom complet">{p.full_name || '—'}</td>
+                      <td data-label="Email">{p.email}</td>
+                      <td data-label="Association" className={styles.tableMuted}>{p.association_name || '—'}</td>
+                      <td data-label="Rôle">{p.role ? <Badge variant="neutral">{p.role}</Badge> : '—'}</td>
+                      <td data-label="Ajouté le" className={styles.tableMuted}>
+                        {p.added_at
+                          ? formatDisplayTime(p.added_at, election.schedule_timezone).text
+                          : '—'}
+                      </td>
+                      <td data-label="Actions">
+                        <Button size="sm" variant="ghost" onClick={() => onRemoveParticipant(p)}>
+                          Retirer
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {participants.length > partPageSize && (
+              <div className={styles.pagination}>
+                <span className={styles.paginationInfo}>
+                  {(partPage - 1) * partPageSize + 1}–{Math.min(partPage * partPageSize, participants.length)} sur {participants.length} participants
+                </span>
+                <div className={styles.paginationButtons}>
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setPartPage((p) => Math.max(1, p - 1))}
+                    disabled={partPage === 1}
+                    aria-label="Page précédente"
+                  >
+                    ‹
+                  </button>
+                  {Array.from({ length: Math.ceil(participants.length / partPageSize) }, (_, i) => i + 1)
+                    .filter((page) => {
+                      const total = Math.ceil(participants.length / partPageSize);
+                      return page === 1 || page === total || (page >= partPage - 1 && page <= partPage + 1);
+                    })
+                    .reduce((acc, page, idx, arr) => {
+                      if (idx > 0 && page - arr[idx - 1] > 1) acc.push('...');
+                      acc.push(page);
+                      return acc;
+                    }, [])
+                    .map((item, idx) =>
+                      item === '...' ? (
+                        <span key={`ellipsis-${idx}`} className={styles.pageEllipsis}>…</span>
+                      ) : (
+                        <button
+                          key={item}
+                          className={`${styles.pageBtn} ${partPage === item ? styles.pageBtnActive : ''}`}
+                          onClick={() => setPartPage(item)}
+                          aria-label={`Page ${item}`}
+                          aria-current={partPage === item ? 'page' : undefined}
+                        >
+                          {item}
+                        </button>
+                      )
+                    )}
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setPartPage((p) => Math.min(Math.ceil(participants.length / partPageSize), p + 1))}
+                    disabled={partPage === Math.ceil(participants.length / partPageSize)}
+                    aria-label="Page suivante"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </Card>

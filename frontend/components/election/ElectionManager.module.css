@@ -120,6 +120,27 @@
 }
 
 /* ── Positions ───────────────────────────────────────────────────── */
+/* Scrollable wrapper when there are many positions */
+.positionListWrap {
+  max-height: 600px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  margin: 0 -0.1rem;
+  padding: 0 0.1rem;
+}
+
+.positionListWrap::-webkit-scrollbar {
+  width: 5px;
+}
+
+.positionListWrap::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
 .positionList {
   display: flex;
   flex-direction: column;
@@ -257,6 +278,54 @@
   flex-wrap: wrap;
 }
 
+/* ── Table: fixed header + scrollable body ─────────────────────────── */
+.tableContainer {
+  margin-top: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.tableHeaderWrap {
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+}
+
+.tableHeaderWrap .table thead th {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 0.7rem 0.9rem;
+  background: transparent;
+  border-bottom: none;
+  white-space: nowrap;
+}
+
+.tableBodyWrap {
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.tableBodyWrap::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.tableBodyWrap::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* Keep legacy .tableWrap for other uses */
 .tableWrap {
   overflow-x: auto;
   border: 1px solid var(--border);
@@ -394,6 +463,84 @@
   color: var(--danger);
 }
 
+/* ── Pagination ───────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-subtle);
+  flex-wrap: wrap;
+}
+
+.paginationInfo {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.paginationButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 0.4rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  line-height: 1;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: var(--fa2i-green-glow);
+  color: var(--fa2i-green);
+}
+
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pageBtnActive {
+  background: var(--fa2i-green);
+  border-color: var(--fa2i-green);
+  color: #fff;
+}
+
+.pageBtnActive:hover:not(:disabled) {
+  background: var(--fa2i-green-dark);
+  border-color: var(--fa2i-green-dark);
+  color: #fff;
+}
+
+.pageEllipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 30px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  user-select: none;
+}
+
 /* ── Animation ───────────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
@@ -407,11 +554,34 @@
 /* ── Responsive Mobile & Tablet Overrides ─────────────────────────── */
 @media (max-width: 768px) {
   /* Convert tables into nice block cards on mobile/tablet viewports */
-  .tableWrap {
+  .tableWrap,
+  .tableContainer {
     border: none;
     overflow-x: visible;
+    border-radius: 0;
+    background: transparent;
   }
-  
+
+  .tableHeaderWrap {
+    display: none;
+  }
+
+  .tableBodyWrap {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .positionListWrap {
+    max-height: none;
+    overflow: visible;
+  }
+
   .table {
     display: block;
     width: 100%;

@@ -26,6 +26,10 @@ export default function MembersPage() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Pagination
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
   const [success, setSuccess] = useState('');
 
   // Add modal state
@@ -315,72 +319,148 @@ export default function MembersPage() {
             text="Ajoutez un premier membre, individuellement ou par import de fichier."
           />
         ) : (
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Nom complet</th>
-                  <th>Email</th>
-                  <th>Téléphone</th>
-                  <th>Statut</th>
-                  <th>Ajouté le</th>
-                  <th className={styles.actionsCol}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {members.map((m) => (
-                  <tr key={m.user_id} className={m.is_active ? undefined : styles.disabledRow}>
-                    <td data-label="Nom complet">
-                      <span className={styles.name}>{m.full_name || '—'}</span>
-                      {m.is_temporary_password && (
-                        <span className={styles.tempPwd} title="Mot de passe temporaire non encore changé">
-                          Mot de passe temporaire
-                        </span>
-                      )}
-                    </td>
-                    <td className={styles.emailCell} data-label="Email">{m.email}</td>
-                    <td className={styles.emailCell} data-label="Téléphone">{m.phone || '—'}</td>
-                    <td data-label="Statut">
-                      {m.is_active ? (
-                        <Badge variant="open">Actif</Badge>
-                      ) : (
-                        <Badge variant="closed">Désactivé</Badge>
-                      )}
-                    </td>
-                    <td className={styles.emailCell} data-label="Ajouté le">
-                      {m.added_at ? new Date(m.added_at).toLocaleString('fr-FR') : '—'}
-                    </td>
-                    <td data-label="Actions">
-                      <div className={styles.actions}>
-                        <Button variant="outline" onClick={() => openEdit(m)}>
-                          Modifier
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => toggleActive(m)}
-                          disabled={togglingId === m.user_id}
-                        >
-                          {togglingId === m.user_id
-                            ? '...'
-                            : m.is_active
-                            ? 'Désactiver'
-                            : 'Activer'}
-                        </Button>
-                        <Button
-                          variant="danger"
-                          onClick={() => {
-                            setDError('');
-                            setDeleteMember(m);
-                          }}
-                        >
-                          Supprimer
-                        </Button>
-                      </div>
-                    </td>
+          <div className={styles.tableContainer}>
+            {/* Fixed header */}
+            <div className={styles.tableHeaderWrap}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={{ width: '22%' }}>Nom complet</th>
+                    <th style={{ width: '25%' }}>Email</th>
+                    <th style={{ width: '13%' }}>Téléphone</th>
+                    <th style={{ width: '9%' }}>Statut</th>
+                    <th style={{ width: '13%' }}>Ajouté le</th>
+                    <th style={{ width: '18%' }} className={styles.actionsCol}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+              </table>
+            </div>
+
+            {/* Scrollable body only */}
+            <div className={styles.tableBodyWrap}>
+              <table className={styles.table}>
+                <colgroup>
+                  <col style={{ width: '22%' }} />
+                  <col style={{ width: '25%' }} />
+                  <col style={{ width: '13%' }} />
+                  <col style={{ width: '9%' }} />
+                  <col style={{ width: '13%' }} />
+                  <col style={{ width: '18%' }} />
+                </colgroup>
+                <tbody>
+                  {members
+                    .slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+                    .map((m) => (
+                    <tr key={m.user_id} className={m.is_active ? undefined : styles.disabledRow}>
+                      <td data-label="Nom complet">
+                        <span className={styles.name}>{m.full_name || '—'}</span>
+                        {m.is_temporary_password && (
+                          <span className={styles.tempPwd} title="Mot de passe temporaire non encore changé">
+                            Mot de passe temporaire
+                          </span>
+                        )}
+                      </td>
+                      <td className={styles.emailCell} data-label="Email">{m.email}</td>
+                      <td className={styles.emailCell} data-label="Téléphone">{m.phone || '—'}</td>
+                      <td data-label="Statut">
+                        {m.is_active ? (
+                          <Badge variant="open">Actif</Badge>
+                        ) : (
+                          <Badge variant="closed">Désactivé</Badge>
+                        )}
+                      </td>
+                      <td className={styles.emailCell} data-label="Ajouté le">
+                        {m.added_at ? new Date(m.added_at).toLocaleString('fr-FR') : '—'}
+                      </td>
+                      <td data-label="Actions">
+                        <div className={styles.actions}>
+                          <Button variant="outline" size="sm" onClick={() => openEdit(m)}>
+                            Modifier
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleActive(m)}
+                            disabled={togglingId === m.user_id}
+                          >
+                            {togglingId === m.user_id
+                              ? '...'
+                              : m.is_active
+                              ? 'Désactiver'
+                              : 'Activer'}
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              setDError('');
+                              setDeleteMember(m);
+                            }}
+                          >
+                            Supprimer
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination controls */}
+            {members.length > PAGE_SIZE && (
+              <div className={styles.pagination}>
+                <span className={styles.paginationInfo}>
+                  {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, members.length)} sur {members.length} membres
+                </span>
+                <div className={styles.paginationButtons}>
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    aria-label="Page précédente"
+                  >
+                    ‹
+                  </button>
+                  {Array.from({ length: Math.ceil(members.length / PAGE_SIZE) }, (_, i) => i + 1)
+                    .filter((page) => {
+                      const total = Math.ceil(members.length / PAGE_SIZE);
+                      return page === 1 || page === total ||
+                        (page >= currentPage - 1 && page <= currentPage + 1);
+                    })
+                    .reduce((acc, page, idx, arr) => {
+                      if (idx > 0 && page - arr[idx - 1] > 1) {
+                        acc.push('...');
+                      }
+                      acc.push(page);
+                      return acc;
+                    }, [])
+                    .map((item, idx) =>
+                      item === '...' ? (
+                        <span key={`ellipsis-${idx}`} className={styles.pageEllipsis}>…</span>
+                      ) : (
+                        <button
+                          key={item}
+                          className={`${styles.pageBtn} ${currentPage === item ? styles.pageBtnActive : ''}`}
+                          onClick={() => setCurrentPage(item)}
+                          aria-label={`Page ${item}`}
+                          aria-current={currentPage === item ? 'page' : undefined}
+                        >
+                          {item}
+                        </button>
+                      )
+                    )}
+                  <button
+                    className={styles.pageBtn}
+                    onClick={() => setCurrentPage((p) => Math.min(Math.ceil(members.length / PAGE_SIZE), p + 1))}
+                    disabled={currentPage === Math.ceil(members.length / PAGE_SIZE)}
+                    aria-label="Page suivante"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </Card>
