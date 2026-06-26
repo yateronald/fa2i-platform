@@ -21,6 +21,7 @@ const { withTransaction } = require('../db/pool');
 const usersRepository = require('../db/repositories/usersRepository');
 const associationsRepository = require('../db/repositories/associationsRepository');
 const membersRepository = require('../db/repositories/membersRepository');
+const participantsRepository = require('../db/repositories/participantsRepository');
 const credentialService = require('./credentialService');
 const emailService = require('./emailService');
 const accessControlService = require('./accessControlService');
@@ -43,6 +44,7 @@ function resolveDeps(deps) {
     usersRepo: (deps && deps.usersRepository) || usersRepository,
     assocRepo: (deps && deps.associationsRepository) || associationsRepository,
     membersRepo: (deps && deps.membersRepository) || membersRepository,
+    participantsRepo: (deps && deps.participantsRepository) || participantsRepository,
     credSvc: (deps && deps.credentialService) || credentialService,
     emailSvc: (deps && deps.emailService) || emailService,
     txRunner: (deps && deps.withTransaction) || withTransaction,
@@ -458,15 +460,39 @@ async function removeMember(identity, userId, deps) {
   if (!accessControlService.canManageMembers(identity)) {
     return accessDenied();
   }
-  const { membersRepo, txRunner, txOpts } = resolveDeps(deps);
+  // Self-protection: a connected admin cannot remove their own account here.
+  if (identity.id === userId) {
+    return { success: false, error: 'Vous ne pouvez pas vous retirer vous-même.' };
+  }
+
+  const { usersRepo, membersRepo, participantsRepo, txRunner, txOpts } = resolveDeps(deps);
 
   return txRunner(async (client) => {
     const exists = await membersRepo.findMembership(client, identity.association_id, userId);
     if (!exists) {
       return { success: false, error: 'Membre introuvable' };
     }
+
+    // Always unlink from the members roster.
     await membersRepo.removeMembership(client, identity.association_id, userId);
-    return { success: true };
+
+    const voted = await usersRepo.hasVotingHistory(client, userId);
+
+    if (voted) {
+      // The person already cast a ballot → their vote must be preserved for
+      // history. Remove them only from elections where they did NOT vote, and
+      // DEACTIVATE the account so they can no longer access the platform. The
+      // account row, voting markers and anonymous votes are all kept.
+      await participantsRepo.removeUnvotedForUser(client, userId);
+      await usersRepo.setActive(client, userId, false);
+      return { success: true, deactivated: true, accountDeleted: false };
+    }
+
+    // No voting history → safe to fully remove (clears participants + nulls any
+    // created_by, then deletes the account; membership already unlinked).
+    await usersRepo.clearUserReferences(client, userId);
+    await usersRepo.deleteById(client, userId);
+    return { success: true, accountDeleted: true };
   }, txOpts);
 }
 

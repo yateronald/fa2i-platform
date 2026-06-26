@@ -257,6 +257,47 @@ async function deleteById(client, id) {
 }
 
 /**
+ * Clear the rows that reference a user via a non-cascading foreign key so the
+ * user account can then be safely hard-deleted. Removes the user from all
+ * election participant lists and nulls out any election/candidate they created.
+ *
+ * IMPORTANT: this does NOT touch voting history (voter_voted /
+ * voter_voted_position) or the anonymous votes — those must be preserved. It is
+ * therefore only safe to hard-delete a user who has NO voting history (see
+ * hasVotingHistory); a user who has voted is deactivated instead.
+ *
+ * Tables with ON DELETE CASCADE (association_members, password_reset_codes) are
+ * handled automatically by the database when the user row is deleted.
+ *
+ * @param {import('pg').PoolClient} client
+ * @param {string} id - user id
+ * @returns {Promise<void>}
+ */
+async function clearUserReferences(client, id) {
+  await client.query('DELETE FROM participants WHERE user_id = $1', [id]);
+  await client.query('UPDATE elections SET created_by = NULL WHERE created_by = $1', [id]);
+  await client.query('UPDATE candidates SET created_by = NULL WHERE created_by = $1', [id]);
+}
+
+/**
+ * True iff the user has ANY voting history (has cast at least one ballot, at the
+ * election or per-position level). Such a user must NOT be hard-deleted so the
+ * voting record is preserved.
+ * @param {import('pg').PoolClient} client
+ * @param {string} id - user id
+ * @returns {Promise<boolean>}
+ */
+async function hasVotingHistory(client, id) {
+  const result = await client.query(
+    `SELECT
+       EXISTS(SELECT 1 FROM voter_voted_position WHERE user_id = $1)
+       OR EXISTS(SELECT 1 FROM voter_voted WHERE user_id = $1) AS voted`,
+    [id]
+  );
+  return result.rows[0] ? result.rows[0].voted === true : false;
+}
+
+/**
  * Find the first management-role user matching the given normalized email,
  * across ANY association and ANY active state. Used for the global uniqueness
  * check when creating a new management account.
@@ -334,6 +375,8 @@ module.exports = {
   updatePhone,
   updateRole,
   deleteById,
+  clearUserReferences,
+  hasVotingHistory,
   findManagementUserByEmailAnywhere,
   listAssociationManagementUsers,
   updateAssociationUser,

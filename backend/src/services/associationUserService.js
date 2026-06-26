@@ -25,6 +25,7 @@
 const { withTransaction } = require('../db/pool');
 const usersRepository = require('../db/repositories/usersRepository');
 const associationsRepository = require('../db/repositories/associationsRepository');
+const participantsRepository = require('../db/repositories/participantsRepository');
 const credentialService = require('./credentialService');
 const emailService = require('./emailService');
 const { isValidEmail } = require('./associationService');
@@ -94,6 +95,7 @@ function resolveDeps(deps) {
   return {
     usersRepo: (deps && deps.usersRepository) || usersRepository,
     assocRepo: (deps && deps.associationsRepository) || associationsRepository,
+    participantsRepo: (deps && deps.participantsRepository) || participantsRepository,
     credSvc: (deps && deps.credentialService) || credentialService,
     emailSvc: (deps && deps.emailService) || emailService,
     txRunner: (deps && deps.withTransaction) || withTransaction,
@@ -379,13 +381,27 @@ async function deleteAssociationUser(identity, userId, deps) {
   if (identity.id === userId) {
     return { success: false, error: 'Vous ne pouvez pas supprimer votre propre compte' };
   }
-  const { usersRepo, txRunner, txOpts } = resolveDeps(deps);
+  const { usersRepo, participantsRepo, txRunner, txOpts } = resolveDeps(deps);
 
   const result = await txRunner(async (client) => {
     const target = await usersRepo.findByIdAny(client, userId);
     if (!canActOnTarget(identity, target)) {
       return { success: false, error: 'Utilisateur introuvable' };
     }
+
+    const voted = await usersRepo.hasVotingHistory(client, userId);
+    if (voted) {
+      // Preserve voting history: remove them only from elections where they did
+      // not vote, and deactivate the account so they lose platform access. The
+      // account, voting markers and anonymous votes are all kept.
+      await participantsRepo.removeUnvotedForUser(client, userId);
+      await usersRepo.setActive(client, userId, false);
+      return { success: true, deactivated: true };
+    }
+
+    // No voting history → clear references (participants + created_by) and
+    // hard-delete the account.
+    await usersRepo.clearUserReferences(client, userId);
     await usersRepo.deleteById(client, userId);
     return { success: true };
   }, txOpts);

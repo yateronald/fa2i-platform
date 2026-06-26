@@ -471,21 +471,21 @@ export default function MembersPage() {
               <div className={styles.previewSummary}>
                 <Badge variant="neutral">{previewRows.length} ligne(s)</Badge>
               </div>
-              <div className={styles.tableWrap}>
-                <table className={styles.table}>
+              <div className={styles.previewTableWrap}>
+                <table className={styles.previewTable}>
                   <thead>
                     <tr>
-                      <th>Nom complet</th>
-                      <th>Email</th>
-                      <th>Téléphone</th>
+                      <th className={styles.previewColName}>Nom complet</th>
+                      <th className={styles.previewColEmail}>Email</th>
+                      <th className={styles.previewColPhone}>Téléphone</th>
                     </tr>
                   </thead>
                   <tbody>
                     {previewRows.map((r, i) => (
                       <tr key={`${r.email || 'row'}-${i}`}>
-                        <td data-label="Nom complet">{r.fullName || <span className={styles.muted}>—</span>}</td>
-                        <td data-label="Email">{r.email || <span className={styles.muted}>—</span>}</td>
-                        <td data-label="Téléphone">{r.phone || <span className={styles.muted}>—</span>}</td>
+                        <td>{r.fullName || <span className={styles.muted}>—</span>}</td>
+                        <td>{r.email || <span className={styles.muted}>—</span>}</td>
+                        <td>{r.phone || <span className={styles.muted}>—</span>}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -569,7 +569,8 @@ export default function MembersPage() {
             <p>
               Êtes-vous sûr de vouloir supprimer{' '}
               <strong>{deleteMember.full_name || deleteMember.email}</strong> de la liste des
-              membres ? Cette action est irréversible.
+              membres ? Il sera également retiré de toutes les élections où il figure. Cette
+              action est irréversible.
             </p>
             <div className={styles.formActions}>
               <Button variant="danger" onClick={confirmDelete} disabled={deleting}>

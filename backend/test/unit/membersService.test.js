@@ -59,6 +59,9 @@ function createMockDeps(overrides = {}) {
         is_active: true,
       })),
       updateEmailAndResetTempPassword: vi.fn().mockResolvedValue({ id: 'u1' }),
+      clearUserReferences: vi.fn().mockResolvedValue(undefined),
+      hasVotingHistory: vi.fn().mockResolvedValue(false),
+      deleteById: vi.fn().mockResolvedValue(1),
       ...overrides.usersRepository,
     },
     associationsRepository: {
@@ -72,6 +75,11 @@ function createMockDeps(overrides = {}) {
       listByAssociation: vi.fn().mockResolvedValue([]),
       listUserIds: vi.fn().mockResolvedValue([]),
       ...overrides.membersRepository,
+    },
+    participantsRepository: {
+      removeAllForUser: vi.fn().mockResolvedValue(0),
+      removeUnvotedForUser: vi.fn().mockResolvedValue(0),
+      ...overrides.participantsRepository,
     },
     credentialService: {
       generateTemporaryPassword: vi.fn().mockReturnValue('Temp1234!abcXYZ'),

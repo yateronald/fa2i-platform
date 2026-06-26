@@ -54,7 +54,13 @@ function createMockDeps(overrides = {}) {
       updateAssociationUser: vi.fn().mockResolvedValue(createdRow()),
       setActive: vi.fn().mockResolvedValue(createdRow({ is_active: false })),
       deleteById: vi.fn().mockResolvedValue(1),
+      clearUserReferences: vi.fn().mockResolvedValue(undefined),
+      hasVotingHistory: vi.fn().mockResolvedValue(false),
       ...overrides.usersRepository,
+    },
+    participantsRepository: {
+      removeUnvotedForUser: vi.fn().mockResolvedValue(0),
+      ...overrides.participantsRepository,
     },
     associationsRepository: {
       findById: vi.fn().mockResolvedValue({ id: ASSOC_ID, name: 'Assoc One', logo_ref: 'logo-ref' }),

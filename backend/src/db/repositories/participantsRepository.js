@@ -50,6 +50,43 @@ async function remove(client, electionId, userId) {
 }
 
 /**
+ * Remove a user from EVERY election they participate in (all rows).
+ * Used when a member/user is deleted so they vanish from all election lists.
+ * @param {import('pg').PoolClient} client
+ * @param {string} userId
+ * @returns {Promise<number>} number of participant rows removed.
+ */
+async function removeAllForUser(client, userId) {
+  const result = await client.query('DELETE FROM participants WHERE user_id = $1', [userId]);
+  return result.rowCount;
+}
+
+/**
+ * Remove a user from the elections where they have NOT voted, while KEEPING
+ * their participant row for any election where they already cast a ballot — so
+ * voting history and per-election statistics stay intact.
+ * @param {import('pg').PoolClient} client
+ * @param {string} userId
+ * @returns {Promise<number>} number of participant rows removed.
+ */
+async function removeUnvotedForUser(client, userId) {
+  const result = await client.query(
+    `DELETE FROM participants p
+     WHERE p.user_id = $1
+       AND NOT EXISTS (
+         SELECT 1 FROM voter_voted_position vp
+         WHERE vp.election_id = p.election_id AND vp.user_id = p.user_id
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM voter_voted vv
+         WHERE vv.election_id = p.election_id AND vv.user_id = p.user_id
+       )`,
+    [userId]
+  );
+  return result.rowCount;
+}
+
+/**
  * Find all participants for an election.
  * @param {import('pg').PoolClient} client
  * @param {string} electionId
@@ -101,6 +138,8 @@ module.exports = {
   findByElectionAndUser,
   create,
   remove,
+  removeAllForUser,
+  removeUnvotedForUser,
   findByElection,
   findByEmailInElection,
   countByElectionAndAssociation,
