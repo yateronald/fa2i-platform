@@ -140,6 +140,46 @@ router.get('/', async (req, res) => {
 });
 
 /**
+ * GET /elections/participating
+ * Returns the elections where the CURRENT user is a participant (a voter),
+ * regardless of their management role. This powers the "Voter" view so that an
+ * admin/manager who has also been added as a participant can cast their ballot.
+ * Must be declared before GET /:id so 'participating' isn't treated as an id.
+ */
+router.get('/participating', async (req, res) => {
+  try {
+    const identity = req.user;
+    const { pool } = require('../db/pool');
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        `SELECT e.id, e.name, e.scope, e.association_id, e.start_at, e.end_at, e.schedule_timezone, e.created_at,
+                a.name AS association_name, a.logo_ref AS association_logo
+         FROM elections e
+         INNER JOIN participants p ON p.election_id = e.id
+         LEFT JOIN associations a ON a.id = e.association_id
+         WHERE p.user_id = $1
+         ORDER BY e.created_at DESC`,
+        [identity.id]
+      );
+
+      const schedulingService = require('../services/schedulingService');
+      const now = new Date();
+      const elections = result.rows.map((election) => ({
+        ...election,
+        state: schedulingService.computeState(election, now),
+      }));
+
+      return res.status(200).json({ elections });
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
  * GET /elections/:id
  * Returns a single election with its computed state (Open/Closed).
  */

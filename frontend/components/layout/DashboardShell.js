@@ -2,7 +2,7 @@
 import { useEffect, useState, createContext, useContext } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { getCurrentUser, logout, getLandingPath } from '@/lib/session';
+import { getCurrentUser, getCachedUser, logout, getLandingPath } from '@/lib/session';
 import { apiClient } from '@/lib/apiClient';
 import { resolveMediaUrl } from '@/lib/media';
 import { setFavicon, resetFavicon, DEFAULT_FAVICON } from '@/lib/favicon';
@@ -115,12 +115,14 @@ function navForRole(user) {
       { href: '/federation/elections', label: 'Élections fédérales', icon: 'elections' },
       { href: '/federation/users', label: 'Utilisateurs', icon: 'users' },
       { href: '/federation/settings', label: 'Paramètres', icon: 'settings' },
+      { href: '/elections', label: 'Voter', icon: 'voters', exact: true },
     ];
   }
   if (user.role === 'FEDERATION_ELECTION_MANAGER') {
     return [
       { href: '/federation', label: 'Tableau de bord', icon: 'dashboard', exact: true },
       { href: '/federation/elections', label: 'Élections fédérales', icon: 'elections' },
+      { href: '/elections', label: 'Voter', icon: 'voters', exact: true },
     ];
   }
   if (user.role === 'ASSOCIATION_MANAGER') {
@@ -131,6 +133,7 @@ function navForRole(user) {
       { href: `${base}/members`, label: 'Membres', icon: 'members' },
       { href: `${base}/federation-voters`, label: 'Électeurs fédération', icon: 'voters' },
       { href: `${base}/users`, label: 'Utilisateurs', icon: 'users' },
+      { href: '/elections', label: 'Voter', icon: 'voters', exact: true },
     ];
   }
   if (user.role === 'ASSOCIATION_ELECTION_MANAGER') {
@@ -145,6 +148,7 @@ function navForRole(user) {
     if (user.can_add_federation_voters) {
       items.push({ href: `${base}/federation-voters`, label: 'Électeurs fédération', icon: 'voters' });
     }
+    items.push({ href: '/elections', label: 'Voter', icon: 'voters', exact: true });
     return items;
   }
   return [
@@ -240,6 +244,14 @@ export default function DashboardShell({ title, children }) {
 
   useEffect(() => {
     let active = true;
+    // Render immediately from the cached user (set during a previous mount) so
+    // navigating between layout areas doesn't flash a full-screen spinner while
+    // /auth/me round-trips. Then refresh in the background.
+    const cached = getCachedUser();
+    if (cached) {
+      setUser(cached);
+      setLoading(false);
+    }
     getCurrentUser().then((u) => {
       if (!active) return;
       if (!u) { window.location.href = '/login'; return; }

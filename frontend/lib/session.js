@@ -7,18 +7,68 @@
 
 import { apiClient } from './apiClient';
 
+const USER_CACHE_KEY = 'fa2i_user';
+// Module-level cache so navigations within the SPA don't re-block on /auth/me.
+let _cachedUser;
+
+/**
+ * Synchronously read the cached current user (module cache, then sessionStorage).
+ * Returns null if nothing is cached. Safe during SSR (returns null).
+ *
+ * @returns {object|null}
+ */
+export function getCachedUser() {
+  if (_cachedUser !== undefined) return _cachedUser;
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(USER_CACHE_KEY);
+    if (raw) {
+      _cachedUser = JSON.parse(raw);
+      return _cachedUser;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+/**
+ * Clear the cached user (called on logout / auth failure).
+ */
+export function clearCachedUser() {
+  _cachedUser = undefined;
+  if (typeof window !== 'undefined') {
+    try {
+      window.sessionStorage.removeItem(USER_CACHE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 /**
  * Fetch the current authenticated user from the backend.
- * Returns null if the user is not authenticated (401).
+ * Returns null if the user is not authenticated (401). The result is cached so
+ * subsequent page/layout mounts can render instantly without re-blocking on the
+ * network.
  *
  * @returns {Promise<{ id: string, email: string, role: string, association_id: string|null } | null>}
  */
 export async function getCurrentUser() {
   try {
     const user = await apiClient.get('/auth/me');
+    _cachedUser = user;
+    if (typeof window !== 'undefined') {
+      try {
+        window.sessionStorage.setItem(USER_CACHE_KEY, JSON.stringify(user));
+      } catch {
+        /* ignore */
+      }
+    }
     return user;
   } catch (err) {
     if (err.status === 401 || err.status === 403) {
+      clearCachedUser();
       return null;
     }
     throw err;
@@ -54,6 +104,7 @@ export function getLandingPath(user) {
  * @returns {Promise<void>}
  */
 export async function logout() {
+  clearCachedUser();
   try {
     await apiClient.post('/auth/logout', {});
   } catch {

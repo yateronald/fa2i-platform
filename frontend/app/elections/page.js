@@ -43,7 +43,9 @@ export default function ElectionsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await apiClient.get('/elections');
+        // Elections where the CURRENT user is a participant — works for any
+        // role, so an admin/manager who is also a voter sees their ballots.
+        const data = await apiClient.get('/elections/participating');
         setElections(data.elections || []);
       } catch (err) {
         if (err.status === 401) {
